@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PPTX to PDF Converter</title>
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
+    <style type="text/css">
+        .c1 {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body class="c1">
+    <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">YOUR WEBPAGE NAME</a>
+            <a class="navbar-brand" href="mailto:"><i class="fa-solid fa-envelope"></i></a>
+            <a class="navbar-brand" href=""><i class="fa-brands fa-square-snapchat"></i></a>
+            <a class="navbar-brand" href=""><i class="fa-brands fa-square-instagram"></i></a>
+            <a class="navbar-brand" href=""><i class="fa-solid fa-circle-info"></i></a>
+        </div>
+    </nav>
+
+    <div class="mb-3">
+        <h1>PPTX to PDF Converter</h1>
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="fileInput">Insert File&nbsp;&nbsp;<i class="fa-solid fa-upload"></i></label>
+            <input class="form-control" type="file" id="fileInput" accept=".pptx">
+        </div>
+        <div class="mb-3">
+            <center>
+                <button type="button" class="btn btn-outline-primary" onclick="convertToPDF()">Convert to PDF <i class="fa-solid fa-microchip"></i></button>
+            </center>
+            <div id="message"></div>
+        </div>
+
+        <script>
+            function convertToPDF() {
+                const fileInput = document.getElementById('fileInput');
+                const message = document.getElementById('message');
+
+                if (fileInput.files.length === 0) {
+                    message.textContent = 'Please select a PPTX file.';
+                    return;
+                }
+
+                const file = fileInput.files[0];
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('storefile', true);
+
+                fetch('https://v2.convertapi.com/convert/pptx/to/pdf?Secret=YOUR_API_SECRET_KEY', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.Files && data.Files.length > 0) {
+                            const pdfUrl = data.Files[0].Url;
+                            message.innerHTML = `<br><center>
+                                <h3>Conversion successful...! 
+                                <a class="btn btn-outline-success" href="${pdfUrl}" target="_blank">
+                                <i class="fa-solid fa-download"></i> Download</a>
+                                </h3></center>`;
+                        } else {
+                            message.textContent = 'Conversion failed.';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        message.textContent = 'An error occurred during conversion.';
+                    });
+            }
+        </script>
+
+        <script type="text/javascript"
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://kit.fontawesome.com/YOUR_FONT_KEY.js" crossorigin="anonymous"></script>
+    </div>
+</body>
+</html>
